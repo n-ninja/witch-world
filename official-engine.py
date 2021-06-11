@@ -1,9 +1,11 @@
 import pygame
 
+
 class Window:
     def __init__(self, width, height, name):
         self.sizeWin = width, height
         self.name = name
+
 
         self.nameWindow()
 
@@ -13,85 +15,126 @@ class Window:
     def nameWindow(self):
         pygame.display.set_caption(self.name)
 
+
 class Square:
-    def __init__(self,win,x,y,size,col):
+    def __init__(self, win, x, y, col):
         self.win = win
-        self.x = x
+        self.x = x  # x, y współrzędne generowania kwadratu
         self.y = y
-        self.size=size
         self.color = col
 
-    def draw(self,x,y,size):
-        pygame.draw.rect(self.win, self.color, pygame.Rect(x,y,size,size))
+    def draw(self, x, y, size):
+        pygame.draw.rect(self.win, self.color, pygame.Rect(x, y, 100, 100))
+
 
 class Board(Square):
-    def __init__(self,win,x,y,x_size,y_size):
-        #Square.__init__(win, x, y, size), czy da się tak zrobić?
+    def __init__(self, win, a, b, i_size, j_size):  # x,y = start_a, start_b
         self.win = win
-        self.x=x #czy tego nie można dziedziczyć?
-        self.y=y
-        self.x_size=x_size
-        self.y_size = y_size
-        self.board=[]
-        self.nextMove=""
-        for i in range(self.x_size):
-            p=[]
-            for j in range(self.y_size):
-                obj=Square(self.win,i,j,100,(00,100,100))
+
+        self.sizeSq = 100
+
+        self.margin = 10
+        self.sm = self.sizeSq + self.margin
+
+        self.a = a  # INDEKS GRACZA
+        self.b = b
+        self.i_size = i_size
+        self.j_size = j_size
+        self.board = []
+        self.nextMove = ""
+        self.list_obstacle=[
+                        [0, 3],
+                        [1, 0],
+                        [2, 0],
+                        [2, 5],
+                        [3, 2],
+                        [4, 2],
+                        [5, 4],
+                        [6, 0],
+                        ]
+        # self.block=True
+
+        for i in range(self.i_size):
+            p = []
+            for j in range(self.j_size):
+                # 100 trzeba wywalić jako zmienną
+                obj = Square(self.win, i, j, (00, 100, 100))
                 p.append(obj)
             self.board.append(p)
-        self.board[x][y].color=(0,0,100) #co to za y i x
+
+    def get_sizeSq(self):
+        return self.sizeSq
+
+    def get_margin(self):
+        return self.margin
+
+    def get_sm(self):
+        return self.sm
 
     def player(self):
         key = pygame.key.get_pressed()
-        self.board[self.x][self.y].color=(00,100,100)
-        if key[pygame.K_RIGHT] and self.x<self.x_size-1 and self.nextMove!="V":
-            self.x+=1
-            self.nextMove="V"
+        self.board[self.a][self.b].color = (00, 100, 100)
 
-        if key[pygame.K_LEFT] and self.x>0 and self.nextMove!="V":
-            self.x-=1
-            self.nextMove="V"
+        for p in range(len(self.list_obstacle)): #generowanie grafiki przeszkody
 
-        if key[pygame.K_UP] and self.y>0 and self.nextMove!="H":
-            self.y-=1
-            self.nextMove="H"
+            self.block_x=self.list_obstacle[p][0]
+            self.block_y=self.list_obstacle[p][-1]
 
-        if key[pygame.K_DOWN] and self.y<self.y_size-1 and self.nextMove!="H":
-            self.y+=1
-            self.nextMove="H"
-        self.board[self.x][self.y].color=(200,0,100)
+            self.board[self.block_x][self.block_y].color = (0, 0, 0) #self.a i self.b mają być wartościami
+
+            # self.block=(self.a==self.block_x and self.b==self.block_y)
+        if key[pygame.K_RIGHT] and self.a < self.i_size - 1 and self.nextMove != "V" and [self.a+1,self.b] not in self.list_obstacle: #self.a+1!=self.block_x:
+            self.a += 1
+            self.nextMove = "V"
+
+        if key[pygame.K_LEFT] and self.a > 0 and self.nextMove != "V" and [self.a-1,self.b] not in self.list_obstacle: #self.a-1!=self.block_x:
+            self.a -= 1
+            self.nextMove = "V"
+
+        if key[pygame.K_DOWN] and self.b < self.j_size - 1 and self.nextMove != "H" and [self.a, self.b+1] not in self.list_obstacle: #self.b+1!=self.block_y:
+            self.b += 1
+            self.nextMove = "H"
+
+        if key[pygame.K_UP] and self.b > 0 and self.nextMove != "H" and [self.a,self.b-1] not in self.list_obstacle: #self.b-1!=self.block_y:
+            self.b -= 1
+            self.nextMove = "H"
+
+        self.board[self.a][self.b].color = (200, 0, 100)
+
 
 
 def main():
     pygame.init()
-    window = Window(1000,1000,"Plansza")
+    window = Window(1000, 1000, "Plansza")
     window = pygame.display.set_mode(window.get_sizeWin())
 
-    #pozycja startowa gracza
-    start_x = 0
-    start_y = 0
+    # pozycja startowa gracza (TABLICE CZYLI OD 0!)
+    # to leci do klasy Board jako x,y, żeby def palyer() działał
+    start_a = 0
+    start_b = 5
 
-    #rozmiar planszy
+    # rozmiar planszy
     x_size = 7
     y_size = 6
 
-    sizeSq=100
-    margin=10
-    board_size=sizeSq+margin
-
-    board = Board(window,start_x,start_y,x_size,y_size)
+    board = Board(window, start_a, start_b, x_size, y_size)
 
     run = True
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-        window.fill((0,0,0))
+        window.fill((0, 0, 0))
         for i in range(x_size):
             for j in range(y_size):
-                board.board[i][j].draw((board_size)*i+margin,(board_size)*j+margin,sizeSq) #przerwa musi byc wieksza niz rozmiar kwadratu!!!
+                # przerwa musi byc wieksza niz rozmiar kwadratu!!!
+                board.board[i][j].draw(
+                    (board.get_sm()) * i + board.get_margin(),
+                    (board.get_sm()) * j + board.get_margin(),
+                    board.get_sizeSq()
+                    )
         board.player()
         pygame.display.update()
+
 
 main()
