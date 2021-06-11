@@ -63,8 +63,6 @@ class Board(Square):
         self.board[self.x][self.y].color=(200,0,100)
 
 
-
-
 def main():
     pygame.init()
     window = Window(1000,1000,"Plansza")
