@@ -27,7 +27,6 @@ class Board(Square):
     def __init__(self, win, a, b, i_size, j_size):  # x,y = start_a, start_b
         self.win = win
         self.i_size, self.j_size = i_size, j_size
-
         # INDEKS GRACZA
         self.a, self.b = a, b
 
@@ -55,7 +54,6 @@ class Board(Square):
                         [5, 4],
                         [6, 0],
                         ]
-        
         self.player_coordinates= [[self.a],[self.b]]
         self.meta_coordinates = [6,1]
         self.player_on_meta = False
@@ -77,7 +75,7 @@ class Board(Square):
     def get_sm(self):
         return self.sm
 
-    def player(self): #tutaj dzieje się cała mechanika
+    def player(self):
         key = pygame.key.get_pressed()
         self.board[self.a][self.b].color = self.boardColor
         self.board[self.meta_coordinates[0]][self.meta_coordinates[-1]].color = self.metaColor
@@ -121,6 +119,9 @@ class Board(Square):
     def get_finished_board(self):
         return self.finished_board
 
+    def get_moveNum(self):
+        return self.moveNum
+
 
 def main():
     pygame.init()
@@ -145,10 +146,14 @@ def main():
                 run = False
 
         if show_mode<=500:
-            window.fill(100,100,100) #instrukcja
+            image = pygame.image.load('instruction_background.png')
+            image = pygame.transform.scale(image, (1200, 960))
+            window.blit(image, (0, 0))
 
         else:
-            winow.fill(0,0,0) #board background
+            image = pygame.image.load('board_background.png')
+            image = pygame.transform.scale(image, (1200,960))
+            window.blit(image, (0, 0))
 
             for i in range(x_size):
                 for j in range(y_size):
@@ -165,8 +170,12 @@ def main():
                 game_time = end-start
 
                 if board.get_finished_board() == True:
-                    winow.fill(250,250,250) #finish statistic background
-
+                    image = pygame.image.load('stats_background.png')
+                    image = pygame.transform.scale(image, (1200, 960))
+                    window.blit(image, (0,0))
+                    font1 = pygame.font.SysFont('Georgia.ttf', 30)
+                    text1 = font1.render("Ilość ruchów:"+str(board.get_moveNum()), True, (17,11,7))
+                    window.blit(text1, (310,630))
 
         show_mode+=1
         print(show_mode)
