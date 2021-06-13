@@ -135,7 +135,7 @@ class Board(Square):
 
 
 def main():
-    print("Możesz się zablokować! Ten świat i jego autorzy bywają złośliwi. \nWygraj lub rzuć klawiaturą!")
+    print("Możesz się zablokować! Ten świat i jego autorzy bywają złośliwi. \nWygraj lub rzuć klawiaturą (lub kliknij po prostu r!")
     pygame.init()
     window = Window(1200, 960, "Plansza")
     window = pygame.display.set_mode(window.get_sizeWin())
