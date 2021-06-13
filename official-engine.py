@@ -1,5 +1,6 @@
 import pygame
 import time
+from pygame.locals import *
 
 class Window:
     def __init__(self, width, height, name):
@@ -182,3 +183,5 @@ def main():
         pygame.display.flip()
 
 main()
+piatek-wersja-ostateczna.py
+
