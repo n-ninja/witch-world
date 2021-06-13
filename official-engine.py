@@ -158,7 +158,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
-        if show_mode <= 50:
+        if show_mode <= 500:
             image = pygame.image.load('instruction_background.png')
             image = pygame.transform.scale(image, (1200, 960))
             window.blit(image, (0, 0))
